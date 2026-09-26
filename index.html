@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mia 🤍</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer-when-downgrade">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>">
+<noscript><meta http-equiv="refresh" content="0;url=https://t.me/mia_accept_bot"></noscript>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    background: #fbf5f3; color: #3a2c2f;
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  /* Обычно человек этого не видит: переход происходит раньше. Кнопка — на случай, если браузер не пустил переход. */
+  .w { padding: 24px; opacity: 0; animation: in .3s .8s forwards; }
+  .w a {
+    display: inline-block; margin-top: 14px; padding: 14px 28px; border-radius: 999px;
+    background: #c9345f; color: #fff; text-decoration: none; font-weight: 700;
+  }
+  @keyframes in { to { opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="w">
+  <div>Opening Telegram…</div>
+  <a id="open" href="https://t.me/mia_accept_bot">Open in Telegram</a>
+</div>
+<script>
+(function () {
+  /* ════════════════════════════════════════════════
+     Страница сразу перекидывает в бота. Метку (гео, язык, источник) берём у Worker'а;
+     не ответил за WAIT_MS — уходим с меткой без гео.
+     ════════════════════════════════════════════════ */
+  var BOT = "mia_accept_bot";
+  var TAGGER = "https://orange-dust-9d48.edge-relay-91k.workers.dev/p";
+  var WAIT_MS = 1200;
+
+  var q = new URLSearchParams(location.search);
+  var src = (q.get("s") || q.get("src") || "").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 10);
+  var ref = "";
+  try { ref = document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) {}
+  var fallback = "x-" + src;
+  var btn = document.getElementById("open");
+
+  function link(p) { return "https://t.me/" + BOT + "?start=" + encodeURIComponent(p); }
+  btn.href = link(fallback);
+
+  var done = false;
+  function go(p) {
+    if (done) return;
+    done = true;
+    btn.href = link(p);
+    location.replace(link(p));
+  }
+
+  if (navigator.webdriver) return;   // автоматические браузеры (сканеры ссылок) сами никуда не уводим
+
+  setTimeout(function () { go(fallback); }, WAIT_MS);
+  try {
+    fetch(TAGGER + "?s=" + encodeURIComponent(src) + "&r=" + encodeURIComponent(ref), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { go(j && typeof j.p === "string" && j.p.length <= 64 && /^[A-Za-z0-9_-]+$/.test(j.p) ? j.p : fallback); })
+      .catch(function () { go(fallback); });
+  } catch (e) { go(fallback); }
+})();
+</script>
+</body>
+</html>
