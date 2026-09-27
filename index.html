@@ -41,6 +41,20 @@
 
   var q = new URLSearchParams(location.search);
   var src = (q.get("s") || q.get("src") || "").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 10);
+
+  /* Номер посетителя для счётчика: случайный, хранится в этом браузере — повторное открытие считается тем же человеком. */
+  function rnd() {
+    var a = new Uint8Array(9), s = "", abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    try { crypto.getRandomValues(a); } catch (e) { for (var k = 0; k < a.length; k++) a[k] = Math.floor(Math.random() * 256); }
+    for (var i = 0; i < a.length; i++) s += abc.charAt(a[i] & 63) + abc.charAt(a[i] >> 2 & 63);
+    return s.slice(0, 16);
+  }
+  var vid = "";
+  try { vid = localStorage.getItem("mv") || ""; } catch (e) {}
+  if (!/^[A-Za-z0-9_-]{8,24}$/.test(vid)) {
+    vid = rnd();
+    try { localStorage.setItem("mv", vid); } catch (e) {}
+  }
   var ref = "";
   try { ref = document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) {}
   var fallback = "x-" + src;
@@ -61,7 +75,7 @@
 
   setTimeout(function () { go(fallback); }, WAIT_MS);
   try {
-    fetch(TAGGER + "?s=" + encodeURIComponent(src) + "&r=" + encodeURIComponent(ref), { cache: "no-store" })
+    fetch(TAGGER + "?s=" + encodeURIComponent(src) + "&r=" + encodeURIComponent(ref) + "&v=" + encodeURIComponent(vid), { cache: "no-store" })
       .then(function (r) { return r.json(); })
       .then(function (j) { go(j && typeof j.p === "string" && j.p.length <= 64 && /^[A-Za-z0-9_-]+$/.test(j.p) ? j.p : fallback); })
       .catch(function () { go(fallback); });
