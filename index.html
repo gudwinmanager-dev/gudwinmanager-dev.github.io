@@ -3,46 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Mia 🤍</title>
+<title>Mia ❤️</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer-when-downgrade">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
 <noscript><meta http-equiv="refresh" content="0;url=https://t.me/mia_accept_bot"></noscript>
 <style>
   html, body { height: 100%; margin: 0; }
   body {
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    background: #fbf5f3; color: #3a2c2f;
+    background: #0e0b10; color: #f5eef3; box-sizing: border-box; padding: 24px 20px;
     font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex; align-items: center; justify-content: center; text-align: center;
   }
-  /* Обычно человек этого не видит: переход происходит раньше. Кнопка — на случай, если браузер не пустил переход. */
-  .w { padding: 24px; opacity: 0; animation: in .3s .8s forwards; }
-  .w a {
-    display: inline-block; margin-top: 14px; padding: 14px 28px; border-radius: 999px;
-    background: #c9345f; color: #fff; text-decoration: none; font-weight: 700;
-  }
-  @keyframes in { to { opacity: 1; } }
+  .c { width: 100%; max-width: 360px; }
+  .h { font-size: 44px; line-height: 1; margin-bottom: 14px; }
+  h1 { font-size: 22px; margin: 0 0 8px; font-weight: 600; }
+  p { margin: 0 0 22px; color: #c9b8c3; font-size: 15px; }
+  .b { display: block; background: #e0457b; color: #fff; text-decoration: none; font-weight: 600; font-size: 17px;
+       padding: 15px 18px; border-radius: 14px; box-shadow: 0 10px 30px -12px rgba(224, 69, 123, .7); }
+  .b:active { transform: scale(.98); }
+  .b2 { display: block; margin-top: 12px; color: #f5eef3; text-decoration: none; font-weight: 600; font-size: 16px;
+        padding: 13px 18px; border-radius: 14px; border: 1px solid #4a3a44; }
+  .lnk { display: inline-block; margin-top: 16px; font-size: 13px; color: #9d8a96; }
+  .warn { color: #f5eef3; font-size: 16px; margin-bottom: 6px; }
+  [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<div class="w">
-  <div>Opening Telegram…</div>
-  <a id="open" href="https://t.me/mia_accept_bot">Open in Telegram</a>
+<div class="c">
+  <div class="h">❤️</div>
+  <h1>Mia is waiting for you</h1>
+  <div id="main">
+    <p>Tap to open the chat in Telegram 💌</p>
+    <a id="open" class="b" href="https://t.me/mia_accept_bot">Open Telegram</a>
+  </div>
+  <div id="noapp" hidden>
+    <p class="warn">Can't find Telegram on this phone 🤔</p>
+    <p>Install it — it's free and takes a minute. Then come back here and tap the button again.</p>
+    <a id="get" class="b" href="https://telegram.org/dl">Get Telegram</a>
+    <a id="again" class="b2" href="https://t.me/mia_accept_bot">I have Telegram — open again</a>
+    <a id="web" class="lnk" href="https://t.me/mia_accept_bot">Open in browser</a>
+  </div>
 </div>
 <script>
 (function () {
   /* ════════════════════════════════════════════════
-     Страница сразу перекидывает в бота. Метку (гео, язык, источник) берём у Worker'а;
-     не ответил за WAIT_MS — уходим с меткой без гео.
+     Страница с кнопкой (тестовая). Считает каждый шаг человека:
+       открыл страницу (Worker /p, pv=2) → нажал «Open Telegram» (tap) →
+       Telegram открылся (app) / не открылся: точно — Android вернул сюда (noapp), примерно — за 2,5 с ничего (noapp_t) →
+       нажал «Get Telegram» (dl) / «open again» (again) / «Open in browser» (web).
+     Шаги уходят маяком в Worker (/e), бот забирает их и показывает в воронке.
      ════════════════════════════════════════════════ */
   var BOT = "mia_accept_bot";
-  var TAGGER = "https://orange-dust-9d48.edge-relay-91k.workers.dev/p";
-  var WAIT_MS = 1200;
+  var W = "https://orange-dust-9d48.edge-relay-91k.workers.dev";
+  var APP_MS = 2500;    // столько ждём, что Telegram откроется
 
   var q = new URLSearchParams(location.search);
   var src = (q.get("s") || q.get("src") || "").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 10);
+  var ua = navigator.userAgent || "";
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var ref = "";
+  try { ref = document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) {}
 
-  /* Номер посетителя для счётчика: случайный, хранится в этом браузере — повторное открытие считается тем же человеком. */
+  /* номер посетителя (тот же, что у основной страницы): повторное открытие — тот же человек */
   function rnd() {
     var a = new Uint8Array(9), s = "", abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
     try { crypto.getRandomValues(a); } catch (e) { for (var k = 0; k < a.length; k++) a[k] = Math.floor(Math.random() * 256); }
@@ -55,31 +79,97 @@
     vid = rnd();
     try { localStorage.setItem("mv", vid); } catch (e) {}
   }
-  var ref = "";
-  try { ref = document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) {}
-  var fallback = "x-" + src;
-  var btn = document.getElementById("open");
 
-  function link(p) { return "https://t.me/" + BOT + "?start=" + encodeURIComponent(p); }
-  btn.href = link(fallback);
-
-  var done = false;
-  function go(p) {
-    if (done) return;
-    done = true;
-    btn.href = link(p);
-    location.replace(link(p));
+  var payload = "x-" + src, mac = "", ready = false;
+  function macOf(p) {
+    try {
+      var s = p.replace(/-/g, "+").replace(/_/g, "/");
+      while (s.length % 4) s += "=";
+      var b = atob(s), h = "";
+      for (var i = b.length - 4; i < b.length; i++) h += ("0" + b.charCodeAt(i).toString(16)).slice(-2);
+      return h;
+    } catch (e) { return ""; }
+  }
+  function setPayload(p) {
+    if (p && p.length <= 64 && /^[A-Za-z0-9_-]+$/.test(p)) {
+      payload = p;
+      mac = p.indexOf("x-") === 0 ? "" : macOf(p);
+    }
+    ready = true;
+    links();
   }
 
-  if (navigator.webdriver) return;   // автоматические браузеры (сканеры ссылок) сами никуда не уводим
+  function beacon(kind) {
+    var u = W + "/e?k=" + kind + "&v=" + encodeURIComponent(vid) + "&m=" + mac + "&s=" + encodeURIComponent(src);
+    try { if (navigator.sendBeacon && navigator.sendBeacon(u)) return; } catch (e) {}
+    try { fetch(u, { method: "POST", mode: "no-cors", keepalive: true }); return; } catch (e) {}
+    try { new Image().src = u; } catch (e) {}
+  }
 
-  setTimeout(function () { go(fallback); }, WAIT_MS);
+  function tgLink() { return "tg://resolve?domain=" + BOT + "&start=" + encodeURIComponent(payload); }
+  function webLink() { return "https://t.me/" + BOT + "?start=" + encodeURIComponent(payload); }
+  function backLink() {   // сюда Android вернёт, если Telegram не установлен
+    return location.origin + location.pathname + "?noapp=1&s=" + encodeURIComponent(src) + "&p=" + encodeURIComponent(payload);
+  }
+  function intentLink() {
+    return "intent://resolve?domain=" + BOT + "&start=" + encodeURIComponent(payload) +
+      "#Intent;scheme=tg;S.browser_fallback_url=" + encodeURIComponent(backLink()) + ";end";
+  }
+  var store = isIOS ? "https://apps.apple.com/app/telegram-messenger/id686449807"
+    : isAndroid ? "https://play.google.com/store/apps/details?id=org.telegram.messenger"
+    : "https://desktop.telegram.org/";
+
+  var el = function (id) { return document.getElementById(id); };
+  function links() {
+    el("open").href = isAndroid ? intentLink() : isIOS ? tgLink() : webLink();
+    el("again").href = el("open").href;
+    el("web").href = webLink();
+    el("get").href = store;
+  }
+  function showNoApp() { el("main").hidden = true; el("noapp").hidden = false; }
+
+  /* Telegram открылся = страница ушла в фон вскоре после нажатия */
+  var t0 = 0, sentApp = false, timer = null;
+  function onHidden() {
+    if (t0 && !sentApp && Date.now() - t0 < 10000) { sentApp = true; beacon("app"); }
+  }
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") onHidden(); });
+  window.addEventListener("pagehide", onHidden);
+
+  function go(kind, ev) {
+    ev.preventDefault();
+    if (!ready) setPayload("");            // метка ещё не пришла — идём без неё, но сразу: браузер пускает в приложение только по нажатию
+    beacon(kind);
+    if (!isAndroid && !isIOS) { location.href = webLink(); return; }   // компьютер: страница Telegram сама откроет приложение
+    t0 = Date.now(); sentApp = false;
+    clearTimeout(timer);
+    location.href = el("open").href;
+    timer = setTimeout(function () {
+      if (!sentApp && document.visibilityState === "visible") { beacon("noapp_t"); showNoApp(); }
+    }, APP_MS);
+  }
+
+  links();
+  el("open").addEventListener("click", function (ev) { go("tap", ev); });
+  el("again").addEventListener("click", function (ev) { go("again", ev); });
+  el("get").addEventListener("click", function () { beacon("dl"); });
+  el("web").addEventListener("click", function () { beacon("web"); });
+
+  if (q.get("noapp") === "1") {                // Android вернул сюда: Telegram на телефоне нет — это точно
+    setPayload(q.get("p") || "");
+    beacon("noapp");
+    showNoApp();
+    return;
+  }
+
+  /* метку ждём сколько нужно: человек всё равно сначала жмёт кнопку (нажал раньше — уйдёт без метки, см. go) */
   try {
-    fetch(TAGGER + "?s=" + encodeURIComponent(src) + "&r=" + encodeURIComponent(ref) + "&v=" + encodeURIComponent(vid), { cache: "no-store" })
+    fetch(W + "/p?s=" + encodeURIComponent(src) + "&r=" + encodeURIComponent(ref) + "&v=" + encodeURIComponent(vid) + "&pv=2",
+          { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { go(j && typeof j.p === "string" && j.p.length <= 64 && /^[A-Za-z0-9_-]+$/.test(j.p) ? j.p : fallback); })
-      .catch(function () { go(fallback); });
-  } catch (e) { go(fallback); }
+      .then(function (j) { if (!ready) setPayload(j && typeof j.p === "string" ? j.p : ""); })
+      .catch(function () { if (!ready) setPayload(""); });
+  } catch (e) { setPayload(""); }
 })();
 </script>
 </body>
