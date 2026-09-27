@@ -56,7 +56,6 @@
      ════════════════════════════════════════════════ */
   var BOT = "mia_accept_bot";
   var W = "https://orange-dust-9d48.edge-relay-91k.workers.dev";
-  var WAIT_MS = 1200;   // ждём метку от Worker'а
   var APP_MS = 2500;    // столько ждём, что Telegram откроется
 
   var q = new URLSearchParams(location.search);
@@ -163,7 +162,7 @@
     return;
   }
 
-  setTimeout(function () { if (!ready) setPayload(""); }, WAIT_MS);
+  /* метку ждём сколько нужно: человек всё равно сначала жмёт кнопку (нажал раньше — уйдёт без метки, см. go) */
   try {
     fetch(W + "/p?s=" + encodeURIComponent(src) + "&r=" + encodeURIComponent(ref) + "&v=" + encodeURIComponent(vid) + "&pv=2",
           { cache: "no-store" })
