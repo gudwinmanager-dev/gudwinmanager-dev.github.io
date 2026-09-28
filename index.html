@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0e0b10">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
 <link rel="preload" as="image" href="mia.webp" type="image/webp">
-<noscript><meta http-equiv="refresh" content="0;url=https://t.me/mia_accept_bot"></noscript>
+<noscript><meta http-equiv="refresh" content="0;url=https://t.me/+ojFly81RosM5MTgy"></noscript>
 <style>
   html, body { margin: 0; min-height: 100%; background: #0e0b10; }
   body {
@@ -75,14 +75,14 @@
   </div>
   <div class="act">
     <div id="main">
-      <a id="open" class="b" href="https://t.me/mia_accept_bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2z"/></svg>Open Telegram</a>
+      <a id="open" class="b" href="https://t.me/+ojFly81RosM5MTgy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2z"/></svg>Open Telegram</a>
     </div>
     <div id="noapp" hidden>
       <p class="warn">Can't find Telegram on this phone 🤔</p>
       <p class="note">Install it — it's free and takes a minute. Then come back here and tap the button again.</p>
       <a id="get" class="b" href="https://telegram.org/dl">Get Telegram</a>
-      <a id="again" class="b2" href="https://t.me/mia_accept_bot">I have Telegram — open again</a>
-      <a id="web" class="lnk" href="https://t.me/mia_accept_bot">Open in browser</a>
+      <a id="again" class="b2" href="https://t.me/+ojFly81RosM5MTgy">I have Telegram — open again</a>
+      <a id="web" class="lnk" href="https://t.me/+ojFly81RosM5MTgy">Open in browser</a>
     </div>
   </div>
 </main>
@@ -96,13 +96,14 @@
 <script>
 (function () {
   /* ════════════════════════════════════════════════
-     Страница с кнопкой (основная с 28.09). Считает каждый шаг человека:
+     Страница с кнопкой (основная с 28.09). С 28.09 ~04:00 кнопка ведёт сразу на заявку в канал (ссылка name=site),
+     бот принимает заявки сразу (gate_mode=off), сам бот людям не показывается. Считает каждый шаг человека:
        открыл страницу (Worker /p, pv=2) → нажал «Open Telegram» (tap) →
        Telegram открылся (app) / не открылся: точно — Android вернул сюда (noapp), примерно — за 2,5 с ничего (noapp_t) →
        нажал «Get Telegram» (dl) / «open again» (again) / «Open in browser» (web).
      Шаги уходят маяком в Worker (/e), бот забирает их и показывает в воронке.
      ════════════════════════════════════════════════ */
-  var BOT = "mia_accept_bot";
+  var JOIN = "ojFly81RosM5MTgy";   // ссылка-заявка в канал (name=site); прежний путь через бота: tg://resolve?domain=mia_accept_bot
   var W = "https://orange-dust-9d48.edge-relay-91k.workers.dev";
   var APP_MS = 2500;    // столько ждём, что Telegram откроется
 
@@ -154,13 +155,13 @@
     try { new Image().src = u; } catch (e) {}
   }
 
-  function tgLink() { return "tg://resolve?domain=" + BOT + "&start=" + encodeURIComponent(payload); }
-  function webLink() { return "https://t.me/" + BOT + "?start=" + encodeURIComponent(payload); }
+  function tgLink() { return "tg://join?invite=" + JOIN; }
+  function webLink() { return "https://t.me/+" + JOIN; }
   function backLink() {   // сюда Android вернёт, если Telegram не установлен
     return location.origin + location.pathname + "?noapp=1&s=" + encodeURIComponent(src) + "&p=" + encodeURIComponent(payload);
   }
   function intentLink() {
-    return "intent://resolve?domain=" + BOT + "&start=" + encodeURIComponent(payload) +
+    return "intent://join?invite=" + JOIN +
       "#Intent;scheme=tg;S.browser_fallback_url=" + encodeURIComponent(backLink()) + ";end";
   }
   var store = isIOS ? "https://apps.apple.com/app/telegram-messenger/id686449807"
