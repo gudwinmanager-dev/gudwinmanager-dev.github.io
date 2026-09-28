@@ -6,49 +6,97 @@
 <title>Mia ❤️</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer-when-downgrade">
+<meta name="theme-color" content="#0e0b10">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
+<link rel="preload" as="image" href="mia.webp" type="image/webp">
 <noscript><meta http-equiv="refresh" content="0;url=https://t.me/mia_accept_bot"></noscript>
 <style>
-  html, body { height: 100%; margin: 0; }
+  html, body { margin: 0; min-height: 100%; background: #0e0b10; }
   body {
-    background: #0e0b10; color: #f5eef3; box-sizing: border-box; padding: 24px 20px;
-    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: flex; align-items: center; justify-content: center; text-align: center;
+    color: #fff; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+    font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
-  .c { width: 100%; max-width: 360px; }
-  .h { font-size: 44px; line-height: 1; margin-bottom: 14px; }
-  h1 { font-size: 22px; margin: 0 0 8px; font-weight: 600; }
-  p { margin: 0 0 22px; color: #c9b8c3; font-size: 15px; }
-  .b { display: block; background: #e0457b; color: #fff; text-decoration: none; font-weight: 600; font-size: 17px;
-       padding: 15px 18px; border-radius: 14px; box-shadow: 0 10px 30px -12px rgba(224, 69, 123, .7); }
-  .b:active { transform: scale(.98); }
-  .b2 { display: block; margin-top: 12px; color: #f5eef3; text-decoration: none; font-weight: 600; font-size: 16px;
-        padding: 13px 18px; border-radius: 14px; border: 1px solid #4a3a44; }
-  .lnk { display: inline-block; margin-top: 16px; font-size: 13px; color: #9d8a96; }
-  .warn { color: #f5eef3; font-size: 16px; margin-bottom: 6px; }
+  /* на широком экране по краям — то же фото, размытое */
+  .bg { position: fixed; inset: 0; background: #0e0b10 url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAAUABADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDUnkW0hDNgux2opOMmmWsgvonIAWSNtrqDnBrPms7vUbn7SJQgg+bk8e2Kjs7W9stTmYS5aTLAqRg+xBrGzNdLG0qK7XeR2B49c1JaIrTRMwyVUkUUVuYn/9k=) center / cover;
+        filter: blur(28px) brightness(.4); transform: scale(1.15); }
+  .card {
+    position: relative; max-width: 480px; margin: 0 auto; background: #0e0b10; overflow: hidden;
+    min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column;
+    box-shadow: 0 0 80px rgba(0, 0, 0, .6);
+  }
+  /* фото занимает всё, что осталось над кнопкой: кнопка видна сразу, без прокрутки */
+  .photo { position: relative; flex: 1 1 auto; min-height: 280px; background: #3a2b33 url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAAUABADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDUnkW0hDNgux2opOMmmWsgvonIAWSNtrqDnBrPms7vUbn7SJQgg+bk8e2Kjs7W9stTmYS5aTLAqRg+xBrGzNdLG0qK7XeR2B49c1JaIrTRMwyVUkUUVuYn/9k=) 50% 28% / cover; }
+  .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%;
+               opacity: 0; transition: opacity .6s ease; }
+  .photo img.on { opacity: 1; }
+  .photo::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+                  background: linear-gradient(180deg, rgba(14, 11, 16, .3) 0%, rgba(14, 11, 16, 0) 14%, rgba(14, 11, 16, 0) 56%,
+                                              rgba(14, 11, 16, .62) 80%, #0e0b10 97%); }
+  .hi { position: absolute; z-index: 1; left: 24px; right: 24px; bottom: 16px; margin: 0;
+        font-size: 34px; line-height: 1.1; font-weight: 800; letter-spacing: -.02em;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, .55); animation: up .6s .05s ease both; }
+  .act { position: relative; flex: 0 0 auto; margin-top: -1px; background: #0e0b10;
+         padding: 9px 20px calc(24px + env(safe-area-inset-bottom)); animation: up .6s .15s ease both; }
+  .b { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; box-sizing: border-box;
+       padding: 0 20px; border-radius: 18px; color: #fff; text-decoration: none; font-weight: 700; font-size: 18px;
+       background: linear-gradient(135deg, #ff6a9a 0%, #e0457b 55%, #c42d68 100%);
+       box-shadow: 0 14px 34px -12px rgba(255, 79, 139, .8), inset 0 1px 0 rgba(255, 255, 255, .28);
+       animation: glow 2.6s ease-in-out infinite; transition: transform .12s ease; }
+  .b:active { transform: scale(.97); }
+  .b svg { width: 21px; height: 21px; flex: none; }
+  .b2 { display: block; margin-top: 12px; padding: 15px 18px; border-radius: 16px; text-align: center; color: #fff;
+        text-decoration: none; font-weight: 600; font-size: 16px; background: rgba(255, 255, 255, .08);
+        border: 1px solid rgba(255, 255, 255, .16); }
+  .lnk { display: block; margin-top: 14px; text-align: center; font-size: 13px; color: #a8949f; }
+  .warn { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+  .note { margin: 0 0 16px; font-size: 14.5px; color: #cdbac6; }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 14px 34px -12px rgba(255, 79, 139, .75), inset 0 1px 0 rgba(255, 255, 255, .28); }
+    50% { box-shadow: 0 16px 46px -8px rgba(255, 79, 139, 1), inset 0 1px 0 rgba(255, 255, 255, .28); }
+  }
+  @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .b, .hi, .act { animation: none; } .photo img { transition: none; } }
+  /* компьютер: карточка с закруглёнными углами посередине */
+  @media (min-width: 560px) and (min-height: 700px) {
+    .card { margin: 24px auto; min-height: calc(100vh - 48px); min-height: calc(100svh - 48px); border-radius: 28px; }
+  }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<div class="c">
-  <div class="h">❤️</div>
-  <h1>Mia is waiting for you</h1>
-  <div id="main">
-    <p>Tap to open the chat in Telegram 💌</p>
-    <a id="open" class="b" href="https://t.me/mia_accept_bot">Open Telegram</a>
+<div class="bg"></div>
+<main class="card">
+  <div class="photo">
+    <picture>
+      <source srcset="mia.webp" type="image/webp">
+      <img id="ph" src="mia.jpg" alt="Mia" width="1033" height="1280" decoding="async" fetchpriority="high">
+    </picture>
+    <h1 class="hi">Hi, it’s Mia,<br>come in❤️</h1>
   </div>
-  <div id="noapp" hidden>
-    <p class="warn">Can't find Telegram on this phone 🤔</p>
-    <p>Install it — it's free and takes a minute. Then come back here and tap the button again.</p>
-    <a id="get" class="b" href="https://telegram.org/dl">Get Telegram</a>
-    <a id="again" class="b2" href="https://t.me/mia_accept_bot">I have Telegram — open again</a>
-    <a id="web" class="lnk" href="https://t.me/mia_accept_bot">Open in browser</a>
+  <div class="act">
+    <div id="main">
+      <a id="open" class="b" href="https://t.me/mia_accept_bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2z"/></svg>Open Telegram</a>
+    </div>
+    <div id="noapp" hidden>
+      <p class="warn">Can't find Telegram on this phone 🤔</p>
+      <p class="note">Install it — it's free and takes a minute. Then come back here and tap the button again.</p>
+      <a id="get" class="b" href="https://telegram.org/dl">Get Telegram</a>
+      <a id="again" class="b2" href="https://t.me/mia_accept_bot">I have Telegram — open again</a>
+      <a id="web" class="lnk" href="https://t.me/mia_accept_bot">Open in browser</a>
+    </div>
   </div>
-</div>
+</main>
+<script>
+(function () {   // фото проявляется, когда загрузилось; до этого — размытая миниатюра
+  var img = document.getElementById("ph");
+  function on() { img.className = "on"; }
+  if (img.complete && img.naturalWidth) on(); else img.addEventListener("load", on);
+})();
+</script>
 <script>
 (function () {
   /* ════════════════════════════════════════════════
-     Страница с кнопкой (тестовая). Считает каждый шаг человека:
+     Страница с кнопкой (основная с 28.09). Считает каждый шаг человека:
        открыл страницу (Worker /p, pv=2) → нажал «Open Telegram» (tap) →
        Telegram открылся (app) / не открылся: точно — Android вернул сюда (noapp), примерно — за 2,5 с ничего (noapp_t) →
        нажал «Get Telegram» (dl) / «open again» (again) / «Open in browser» (web).
